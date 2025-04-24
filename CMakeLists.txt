@@ -13,6 +13,14 @@ add_executable(${PROJECT_NAME}
     mainwindow.cpp
     mainwindow.h
     MainWindow.ui
+    Algorithms.h
+    Algorithms.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${CMAKE_SOURCE_DIR}/npuzzle-gen.py
+    ${CMAKE_CURRENT_BINARY_DIR}/npuzzle-gen.py
+)

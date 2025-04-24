@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QProcess>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -14,5 +15,11 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
+    int             _puzzle_size;
+    QVector<int>    _puzzle_vector;
+
+    void createPuzzle();
+    void parseOutput(const QString &output);
+    void displayPuzzle();
 };

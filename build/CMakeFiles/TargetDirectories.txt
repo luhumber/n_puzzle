@@ -1,5 +1,0 @@
-/Users/luhumber/projects/42/n-puzzle/build/CMakeFiles/MonProjetQt.dir
-/Users/luhumber/projects/42/n-puzzle/build/CMakeFiles/edit_cache.dir
-/Users/luhumber/projects/42/n-puzzle/build/CMakeFiles/rebuild_cache.dir
-/Users/luhumber/projects/42/n-puzzle/build/CMakeFiles/MonProjetQt_autogen_timestamp_deps.dir
-/Users/luhumber/projects/42/n-puzzle/build/CMakeFiles/MonProjetQt_autogen.dir
