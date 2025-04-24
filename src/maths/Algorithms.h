@@ -1,5 +1,12 @@
 #pragma once
 
+struct Node
+{
+    int x;
+    int y;
+    float heuristic;
+};
+
 class Algorithms
 {
 public:
@@ -9,4 +16,6 @@ public:
     void AStar();
     void IDAStar();
 
+private:
+    Node currentNode;
 };

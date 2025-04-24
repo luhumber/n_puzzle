@@ -16,10 +16,13 @@ public:
 
 private:
     Ui::MainWindow* ui;
+    bool            _is_solvable;
     int             _puzzle_size;
     QVector<int>    _puzzle_vector;
 
-    void createPuzzle();
-    void parseOutput(const QString &output);
-    void displayPuzzle();
+    void ParseOutput(const QString &output);
+    void DisplayPuzzle();
+    
+private slots:
+    void CreatePuzzle();
 };

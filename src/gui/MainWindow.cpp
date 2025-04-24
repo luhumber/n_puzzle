@@ -7,15 +7,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::createPuzzle);
+    connect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::CreatePuzzle);
 }
 
 MainWindow::~MainWindow() {
-    disconnect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::createPuzzle);
+    disconnect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::CreatePuzzle);
     delete ui;
 }
 
-void MainWindow::createPuzzle() {
+void MainWindow::CreatePuzzle() {
     QProcess process;
     QString program = "python3";
     QStringList arguments;
@@ -36,24 +36,18 @@ void MainWindow::createPuzzle() {
     process.waitForFinished();
 
     QString output = process.readAllStandardOutput();
-    qDebug() << "Output:" << output;
+    this->ParseOutput(output);
 
-    this->parseOutput(output);
-    this->displayPuzzle();
-
-    return;
+    this->DisplayPuzzle();
 }
 
-void MainWindow::parseOutput(const QString &output) {
+void MainWindow::ParseOutput(const QString &output) {
     QTextStream stream(const_cast<QString*>(&output));
     QString line;
 
     line = stream.readLine();
-    bool is_solvable = !line.contains("unsolvable", Qt::CaseInsensitive);
-    if (!is_solvable) {
-        qDebug() << "Puzzle is unsolvable.";
+    if ((_is_solvable = !line.contains("unsolvable", Qt::CaseInsensitive)) == false)
         return;
-    }
 
     line = stream.readLine();
     _puzzle_size = line.toInt();
@@ -68,17 +62,22 @@ void MainWindow::parseOutput(const QString &output) {
             _puzzle_vector.append(num.toInt());
         }
     }
-
-    qDebug() << "Puzzle size:" << _puzzle_size;
-    qDebug() << "Puzzle (linear):" << _puzzle_vector;
 }
 
-void MainWindow::displayPuzzle() {
+void MainWindow::DisplayPuzzle() {
     QLayoutItem *item;
     while ((item = ui->puzzleGridLayout->takeAt(0)) != nullptr) {
         if (item->widget())
             delete item->widget();
         delete item;
+    }
+
+    if (!_is_solvable) {
+        QLabel *label = new QLabel("The puzzle is unsolvable.", this);
+        label->setAlignment(Qt::AlignCenter);
+        label->setStyleSheet("font-size: 18px; color: red;");
+        ui->puzzleGridLayout->addWidget(label, 0, 0, 1, 1, Qt::AlignCenter);
+        return;
     }
 
     for (int i = 0; i < _puzzle_size; ++i) {
