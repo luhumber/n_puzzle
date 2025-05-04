@@ -2,6 +2,14 @@
 
 #include <QMainWindow>
 #include <QProcess>
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QTimer>
+
+#include "Solver.h"
+#include "AStar.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,14 +23,33 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow* ui;
-    bool            _is_solvable;
-    int             _puzzle_size;
-    QVector<int>    _puzzle_vector;
+    Ui::MainWindow*         ui;
+    bool                    _is_solvable;
+    int                     _puzzle_size;
+    QVector<int>            _puzzle_vector;
+    std::shared_ptr<Solver> _solver;
+
+    QVector<QVector<int>>   _solved_puzzle;
+    int                     _current_state_index;
 
     void ParseOutput(const QString &output);
-    void DisplayPuzzle();
+    void DisplayPuzzle(const QVector<int>& puzzle);
+    QString FormatElapsedTime(qint64 elapsed_ms);
     
 private slots:
-    void CreatePuzzle();
+    void on_CreatePuzzleButtonClicked();
+    void on_ChoosePuzzleButtonClicked();
+
+    void on_StartButtonClicked();
+    void on_InitialStateButtonClicked();
+    void on_GoalStateButtonClicked();
+    void on_BackButtonClicked();
+    void on_NextButtonClicked();
+
+
+public slots:
+    void on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested);
+
+signals:
+    void signal_PuzzleCreated(const QVector<int>& puzzle, int size, const QString& heuristic);
 };
