@@ -86,7 +86,7 @@
                    <number>3</number>
                   </property>
                   <property name="maximum">
-                   <number>5</number>
+                   <number>999</number>
                   </property>
                  </widget>
                 </item>
@@ -460,9 +460,9 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="statesTestedLabel">
+               <widget class="QLabel" name="complexityTimeLabel">
                 <property name="text">
-                 <string>States Tested : </string>
+                 <string>Complexity in time : </string>
                 </property>
                </widget>
               </item>
@@ -480,7 +480,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="statesTestedValueLabel">
+               <widget class="QLabel" name="complexityTimeValueLabel">
                 <property name="text">
                  <string/>
                 </property>
@@ -494,9 +494,9 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="complexityTimeLabel">
+               <widget class="QLabel" name="complexitySizeLabel">
                 <property name="text">
-                 <string>Complexity in time : </string>
+                 <string>Complexity in size : </string>
                 </property>
                </widget>
               </item>
@@ -514,7 +514,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QLabel" name="complexityTimeValueLabel">
+               <widget class="QLabel" name="complexitySizeValueLabel">
                 <property name="text">
                  <string/>
                 </property>

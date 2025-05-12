@@ -72,6 +72,22 @@ void Solver::on_PuzzleCreated(const QVector<int>& puzzle, int size, const QStrin
     _initial_state = puzzle;
     _size = size;
     _heuristic = heuristic;
+    _stop_requested = false;
 
-    (void)QtConcurrent::run([this]() { this->InitSolver(); });
+    if (_algorithm) {
+        _algorithm->setShouldStopPtr(&_stop_requested);
+    }
+
+    _future = QtConcurrent::run([this]() { this->InitSolver(); });
+}
+
+void Solver::on_CloseSolverRequested() {
+    requestStop();
+}
+
+void Solver::requestStop() {
+    _stop_requested = true;
+    if (_algorithm) {
+        _algorithm->requestStop();
+    }
 }

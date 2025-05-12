@@ -11,6 +11,8 @@ QVector<QVector<int>> IDAStar::Solve(const QVector<int>& initial_state, const QV
     path.append(initial_state);
 
     while (true) {
+        if (_stop_requested && *_stop_requested)
+            return {};
         float t = Search(path, 0, bound, goal);
         if (t == -1) {
             return path;
@@ -22,6 +24,9 @@ QVector<QVector<int>> IDAStar::Solve(const QVector<int>& initial_state, const QV
 }
 
 float IDAStar::Search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal) {
+    if (_stop_requested && *_stop_requested)
+        return std::numeric_limits<float>::infinity();
+
     UpdateMaxStatesInMemory(path.size());
     const QVector<int>& node = path.last();
     float f = g + ComputeHeuristic(node, goal);
@@ -39,6 +44,8 @@ float IDAStar::Search(QVector<QVector<int>>& path, float g, float bound, const Q
     });
 
     for (Node& neighbor : neighbors) {
+        if (_stop_requested && *_stop_requested)
+            return std::numeric_limits<float>::infinity();
         bool inPath = std::any_of(path.begin(), path.end(), [&](const QVector<int>& s) {
             return s == neighbor.getState();
         });

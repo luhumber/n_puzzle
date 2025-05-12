@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(this, &MainWindow::signal_PuzzleCreated, _solver.get(), &Solver::on_PuzzleCreated);
     connect(_solver.get(), &Solver::signal_PuzzleSolved, this, &MainWindow::on_PuzzleSolved);
+    connect(this, &MainWindow::signal_CloseSolverRequested, _solver.get(), &Solver::on_CloseSolverRequested);
 }
 
 MainWindow::~MainWindow() {
@@ -30,7 +31,8 @@ void MainWindow::on_CreatePuzzleButtonClicked() {
     QString program = "python3";
     QStringList arguments;
 
-    arguments << "npuzzle-gen.py" << QString::number(ui->puzzleSizeSpinBox->value());
+    QString scriptPath = QDir(QCoreApplication::applicationDirPath()).filePath("npuzzle-gen.py");
+    arguments << scriptPath << QString::number(ui->puzzleSizeSpinBox->value());
 
     if (ui->puzzleStateComboBox->currentText() == "Solvable") {
         arguments << "--solvable";
@@ -155,7 +157,7 @@ void MainWindow::on_NextButtonClicked() {
     }
 }
 
-void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested, qint64 max_states_in_memory) {
+void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 complexity_time, qint64 complexity_size) {
     if (solved_puzzle.isEmpty() || solved_puzzle.last().size() != _puzzle_size * _puzzle_size) {
         QMessageBox::warning(this, "Erreur", "La solution du puzzle est invalide.");
         return;
@@ -167,8 +169,8 @@ void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qin
     ui->resultGroupBox->setEnabled(true);
     ui->timeToProcessValueLabel->setText(this->FormatElapsedTime(elapsed_ms));
     ui->numberOfIterationsLabel->setText(QString::number(solved_puzzle.size() - 1));
-    ui->statesTestedValueLabel->setText(QString::number(states_tested));
-    ui->complexityTimeValueLabel->setText(QString::number(max_states_in_memory));
+    ui->complexityTimeValueLabel->setText(QString::number(complexity_time));
+    ui->complexitySizeValueLabel->setText(QString::number(complexity_size));
     
     this->DisplayPuzzle(_solved_puzzle.last());
 }
@@ -196,4 +198,9 @@ void MainWindow::DisplayMessagePuzzleLayout(const QString& message) {
     label->setAlignment(Qt::AlignCenter);
     label->setStyleSheet("font-size: 18px; color: red;");
     ui->puzzleGridLayout->addWidget(label, 0, 0, 1, 1, Qt::AlignCenter);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    emit signal_CloseSolverRequested();
+    QMainWindow::closeEvent(event);
 }

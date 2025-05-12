@@ -40,6 +40,8 @@ private:
     void    ClearPuzzleLayout();
     void    DisplayMessagePuzzleLayout(const QString& message);
     
+    void    closeEvent(QCloseEvent *event) override;
+    
 private slots:
     void on_CreatePuzzleButtonClicked();
     void on_ChoosePuzzleButtonClicked();
@@ -50,8 +52,9 @@ private slots:
     void on_NextButtonClicked();
 
 public slots:
-    void on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested, qint64 max_states_in_memory);
+    void on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 complexity_time, qint64 complexity_size);
 
 signals:
     void signal_PuzzleCreated(const QVector<int>& puzzle, int size, const QString& heuristic);
+    void signal_CloseSolverRequested();
 };
