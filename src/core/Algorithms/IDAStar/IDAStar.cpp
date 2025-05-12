@@ -4,14 +4,14 @@
 #include <QVector>
 #include <algorithm>
 
-QVector<QVector<int>> IDAStar::solve(const QVector<int>& initial_state, const QVector<int>& goal) {
+QVector<QVector<int>> IDAStar::Solve(const QVector<int>& initial_state, const QVector<int>& goal) {
     _states_tested = 0;
     float bound = ComputeHeuristic(initial_state, goal);
     QVector<QVector<int>> path;
     path.append(initial_state);
 
     while (true) {
-        float t = search(path, 0, bound, goal);
+        float t = Search(path, 0, bound, goal);
         if (t == -1) {
             return path;
         }
@@ -21,7 +21,8 @@ QVector<QVector<int>> IDAStar::solve(const QVector<int>& initial_state, const QV
     }
 }
 
-float IDAStar::search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal) {
+float IDAStar::Search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal) {
+    UpdateMaxStatesInMemory(path.size());
     const QVector<int>& node = path.last();
     float f = g + ComputeHeuristic(node, goal);
     if (f > bound)
@@ -31,7 +32,7 @@ float IDAStar::search(QVector<QVector<int>>& path, float g, float bound, const Q
     ++_states_tested;
 
     float min = std::numeric_limits<float>::infinity();
-    QVector<Node> neighbors = expandNeighbors(Node(node, g, 0, nullptr), goal);
+    QVector<Node> neighbors = ExpandNeighbors(Node(node, g, 0, nullptr), goal);
 
     std::sort(neighbors.begin(), neighbors.end(), [&](const Node& a, const Node& b) {
         return ComputeHeuristic(a.getState(), goal) < ComputeHeuristic(b.getState(), goal);
@@ -44,7 +45,7 @@ float IDAStar::search(QVector<QVector<int>>& path, float g, float bound, const Q
         if (inPath)
             continue;
         path.append(neighbor.getState());
-        float t = search(path, g + 1, bound, goal);
+        float t = Search(path, g + 1, bound, goal);
         if (t == -1)
             return -1;
         if (t < min)
@@ -54,7 +55,7 @@ float IDAStar::search(QVector<QVector<int>>& path, float g, float bound, const Q
     return min;
 }
 
-QVector<Node> IDAStar::expandNeighbors(const Node& node, const QVector<int>& goal) {
+QVector<Node> IDAStar::ExpandNeighbors(const Node& node, const QVector<int>& goal) {
     QVector<Node> neighbors;
     const QVector<int>& state = node.getState();
     int size = static_cast<int>(std::sqrt(state.size()));
@@ -76,7 +77,7 @@ QVector<Node> IDAStar::expandNeighbors(const Node& node, const QVector<int>& goa
     return neighbors;
 }
 
-QString IDAStar::stateToString(const QVector<int>& state) const {
+QString IDAStar::StateToString(const QVector<int>& state) const {
     QString str;
     for (int value : state) {
         str += QString::number(value) + ",";

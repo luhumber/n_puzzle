@@ -15,8 +15,7 @@ class Solver : public QObject {
 public:
     explicit Solver(QObject *parent = nullptr);
     void     InitSolver();
-
-    void setAlgorithm(std::shared_ptr<SearchAlgorithm> algorithm);
+    void     setAlgorithm(std::shared_ptr<SearchAlgorithm> algorithm);
     
 private:
     int                                 _size;
@@ -33,5 +32,5 @@ public slots:
     void    on_PuzzleCreated(const QVector<int>& puzzle, int size, const QString& heuristic);
 
 signals:
-    void    signal_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested);
+    void    signal_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested, quint64 max_states_in_memory);
 };

@@ -6,13 +6,13 @@
 #include <QString>
 #include <QMultiMap>
 
-QString stateToString(const QVector<int>& state) {
+QString StateToString(const QVector<int>& state) {
     QString s;
     for (int v : state) s += QString::number(v) + ",";
     return s;
 }
 
-QVector<QVector<int>> AStar::solve(const QVector<int>& initial_state, const QVector<int>& goal) {
+QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVector<int>& goal) {
     qDebug() << "Initial state:" << initial_state;
     qDebug() << "Goal state:" << goal;
     _states_tested = 0;
@@ -25,16 +25,17 @@ QVector<QVector<int>> AStar::solve(const QVector<int>& initial_state, const QVec
     Node startNode(initial_state, 0.0f, h, nullptr);
     
     openList.insert(startNode.getFCost(), startNode);
-    openSetG[stateToString(initial_state)] = 0.0f;
+    openSetG[StateToString(initial_state)] = 0.0f;
     
     while (!openList.isEmpty()) {
+        UpdateMaxStatesInMemory(openList.size() + closedSet.size());
         auto it = openList.begin();
         Node current = it.value();
         openList.erase(it);
 
         ++_states_tested;
     
-        QString currentHash = stateToString(current.getState());
+        QString currentHash = StateToString(current.getState());
         if (closedSet.contains(currentHash))
             continue;
         closedSet.insert(currentHash);
@@ -50,9 +51,9 @@ QVector<QVector<int>> AStar::solve(const QVector<int>& initial_state, const QVec
             return path;
         }
     
-        QVector<Node> neighbors = expandNeighbors(current, goal);
+        QVector<Node> neighbors = ExpandNeighbors(current, goal);
         for (Node& neighbor : neighbors) {
-            QString neighborHash = stateToString(neighbor.getState());
+            QString neighborHash = StateToString(neighbor.getState());
             if (closedSet.contains(neighborHash))
                 continue;
     
@@ -66,7 +67,7 @@ QVector<QVector<int>> AStar::solve(const QVector<int>& initial_state, const QVec
     return {};
 }
 
-QVector<Node> AStar::expandNeighbors(const Node& node, const QVector<int>& goal) {
+QVector<Node> AStar::ExpandNeighbors(const Node& node, const QVector<int>& goal) {
     QVector<Node> neighbors;
     const QVector<int>& state = node.getState();
     int size = static_cast<int>(std::sqrt(state.size()));

@@ -13,11 +13,12 @@ void Solver::InitSolver() {
     QElapsedTimer timer;
     timer.start();
 
-    _algorithm->setHeuristic(Metrics::selectHeuristic(_heuristic));
-    _puzzle_solved = _algorithm->solve(_initial_state, _goal);
+    _algorithm->setHeuristic(Metrics::SelectHeuristic(_heuristic));
+    _puzzle_solved = _algorithm->Solve(_initial_state, _goal);
 
     qint64 elapsed_ms = timer.elapsed();
-    emit signal_PuzzleSolved(_puzzle_solved, elapsed_ms, _algorithm->getStatesTested());
+    emit signal_PuzzleSolved(_puzzle_solved, elapsed_ms, _algorithm->getStatesTested(), 
+                             _algorithm->getMaxStatesInMemory());
 }
 
 void Solver::DecideAlgorithm() {

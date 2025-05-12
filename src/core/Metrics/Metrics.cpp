@@ -3,7 +3,7 @@
 #include <QHash>
 #include <algorithm>
 
-HeuristicType Metrics::selectHeuristic(const QString& heuristic) {
+HeuristicType Metrics::SelectHeuristic(const QString& heuristic) {
     if (heuristic == "Manhattan Distance") {
         return HeuristicType::Manhattan;
     } else if (heuristic == "Hamming Distance") {
@@ -14,7 +14,7 @@ HeuristicType Metrics::selectHeuristic(const QString& heuristic) {
     return HeuristicType::Manhattan;
 }
 
-float Metrics::calculateManhattanDistance(const QVector<int>& current, const QVector<int>& goal) {
+float Metrics::CalculateManhattanDistance(const QVector<int>& current, const QVector<int>& goal) {
     int size = static_cast<int>(std::sqrt(current.size()));
     float distance = 0.0f;
 
@@ -33,7 +33,7 @@ float Metrics::calculateManhattanDistance(const QVector<int>& current, const QVe
     return distance;
 }
 
-float Metrics::calculateHammingDistance(const QVector<int>& current, const QVector<int>& goal) {
+float Metrics::CalculateHammingDistance(const QVector<int>& current, const QVector<int>& goal) {
     int count = 0;
     for (int i = 0; i < current.size(); ++i) {
         if (current[i] != 0 && current[i] != goal[i])
@@ -42,9 +42,9 @@ float Metrics::calculateHammingDistance(const QVector<int>& current, const QVect
     return static_cast<float>(count);
 }
 
-float Metrics::calculateManhattanPlusLC(const QVector<int>& current, const QVector<int>& goal) {
+float Metrics::CalculateManhattanPlusLC(const QVector<int>& current, const QVector<int>& goal) {
     int size = static_cast<int>(std::sqrt(current.size()));
-    float manhattan = calculateManhattanDistance(current, goal);
+    float manhattan = CalculateManhattanDistance(current, goal);
 
     QHash<int, int> goal_positions;
     for (int i = 0; i < goal.size(); ++i) {

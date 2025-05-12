@@ -13,6 +13,8 @@ add_executable(${PROJECT_NAME}
     src/gui/MainWindow.cpp
     src/gui/MainWindow.h
     src/gui/MainWindow.ui
+    src/core/PuzzleParser/PuzzleParser.cpp
+    src/core/PuzzleParser/PuzzleParser.h
     src/core/Solver/Solver.cpp
     src/core/Solver/Solver.h
     src/core/Metrics/Metrics.cpp
@@ -31,6 +33,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src
     src/gui
     src/core
+    src/core/PuzzleParser
     src/core/Algorithms
     src/core/Algorithms/AStar
     src/core/Algorithms/IDAStar

@@ -1,0 +1,6 @@
+# Commentaire avec des tabulations
+4
+0	10	5	7  # Commentaire en fin de ligne
+11	14	4	8
+   1	2	6	13    # Un autre commentaire
+12	3	15	9

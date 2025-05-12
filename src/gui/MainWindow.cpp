@@ -6,13 +6,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    
     _solver = std::make_shared<Solver>(this);
 
     connect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::on_CreatePuzzleButtonClicked);
     connect(ui->choosePuzzlePushButton, &QPushButton::clicked, this, &MainWindow::on_ChoosePuzzleButtonClicked);
     connect(ui->startPushButton, &QPushButton::clicked, this, &MainWindow::on_StartButtonClicked);
-
     connect(ui->initialStatePushButton, &QPushButton::clicked, this, &MainWindow::on_InitialStateButtonClicked);
     connect(ui->goalStatePushButton, &QPushButton::clicked, this, &MainWindow::on_GoalStateButtonClicked);
     connect(ui->backPushButton, &QPushButton::clicked, this, &MainWindow::on_BackButtonClicked);
@@ -47,8 +46,11 @@ void MainWindow::on_CreatePuzzleButtonClicked() {
     process.waitForFinished();
 
     QString output = process.readAllStandardOutput();
-    this->ParseOutput(output);
-
+    if (!this->ParseOutput(output)) {
+        this->ClearPuzzleLayout();
+        this->DisplayMessagePuzzleLayout("Invalid puzzle format.");
+        return;
+    }
     this->DisplayPuzzle(_puzzle_vector);
 
     ui->startPushButton->setEnabled(true);
@@ -71,48 +73,32 @@ void MainWindow::on_ChoosePuzzleButtonClicked() {
     QString fileContent = in.readAll();
     file.close();
 
-    this->ParseOutput(fileContent);
+    if (!this->ParseOutput(fileContent)) {
+        this->ClearPuzzleLayout();
+        this->DisplayMessagePuzzleLayout("Invalid puzzle format.");
+        return;
+    }
     this->DisplayPuzzle(_puzzle_vector);
 
     ui->startPushButton->setEnabled(true);
 }
 
-void MainWindow::ParseOutput(const QString &output) {
-    QTextStream stream(const_cast<QString*>(&output));
-    QString line;
-
-    line = stream.readLine();
-    if ((_is_solvable = !line.contains("unsolvable", Qt::CaseInsensitive)) == false)
-        return;
-
-    line = stream.readLine();
-    _puzzle_size = line.toInt();
-
-    _puzzle_vector.clear();
-    while (!stream.atEnd()) {
-        line = stream.readLine();
-        if (line.isEmpty()) continue;
-
-        QStringList numbers = line.split(" ", Qt::SkipEmptyParts);
-        for (const QString &num : numbers) {
-            _puzzle_vector.append(num.toInt());
-        }
-    }
+bool MainWindow::ParseOutput(const QString &output) {
+    if (!_parser.Parse(output))
+        return false;
+    
+    _puzzle_size = _parser.getPuzzleSize();
+    _puzzle_vector = _parser.getPuzzleVector();
+    _is_solvable = _parser.isSolvable();
+    
+    return true;
 }
 
 void MainWindow::DisplayPuzzle(const QVector<int>& puzzle) {
-    QLayoutItem *item;
-    while ((item = ui->puzzleGridLayout->takeAt(0)) != nullptr) {
-        if (item->widget())
-            delete item->widget();
-        delete item;
-    }
+    this->ClearPuzzleLayout();
 
     if (!_is_solvable) {
-        QLabel *label = new QLabel("The puzzle is unsolvable.", this);
-        label->setAlignment(Qt::AlignCenter);
-        label->setStyleSheet("font-size: 18px; color: red;");
-        ui->puzzleGridLayout->addWidget(label, 0, 0, 1, 1, Qt::AlignCenter);
+        this->DisplayMessagePuzzleLayout("The puzzle is unsolvable.");
         return;
     }
 
@@ -169,7 +155,7 @@ void MainWindow::on_NextButtonClicked() {
     }
 }
 
-void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested) {
+void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 states_tested, qint64 max_states_in_memory) {
     if (solved_puzzle.isEmpty() || solved_puzzle.last().size() != _puzzle_size * _puzzle_size) {
         QMessageBox::warning(this, "Erreur", "La solution du puzzle est invalide.");
         return;
@@ -182,6 +168,7 @@ void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qin
     ui->timeToProcessValueLabel->setText(this->FormatElapsedTime(elapsed_ms));
     ui->numberOfIterationsLabel->setText(QString::number(solved_puzzle.size() - 1));
     ui->statesTestedValueLabel->setText(QString::number(states_tested));
+    ui->complexityTimeValueLabel->setText(QString::number(max_states_in_memory));
     
     this->DisplayPuzzle(_solved_puzzle.last());
 }
@@ -193,4 +180,20 @@ QString MainWindow::FormatElapsedTime(qint64 elapsed_ms) {
     qint64 ms = elapsed_ms % 1000;
 
     return QString("%1m %2s %3ms").arg(minutes).arg(seconds).arg(ms);
+}
+
+void MainWindow::ClearPuzzleLayout() {
+    QLayoutItem *item;
+    while ((item = ui->puzzleGridLayout->takeAt(0)) != nullptr) {
+        if (item->widget())
+            delete item->widget();
+        delete item;
+    }
+}
+
+void MainWindow::DisplayMessagePuzzleLayout(const QString& message) {
+    QLabel *label = new QLabel(message, this);
+    label->setAlignment(Qt::AlignCenter);
+    label->setStyleSheet("font-size: 18px; color: red;");
+    ui->puzzleGridLayout->addWidget(label, 0, 0, 1, 1, Qt::AlignCenter);
 }

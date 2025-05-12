@@ -10,12 +10,10 @@
 
 class IDAStar : public SearchAlgorithm {
 public:
-    QVector<QVector<int>> solve(const QVector<int>& initial_state, const QVector<int>& goal) override;
+    QVector<QVector<int>> Solve(const QVector<int>& initial_state, const QVector<int>& goal) override;
 
 protected:
-    QVector<Node> expandNeighbors(const Node& node, const QVector<int>& goal) override;
-
-private:
-    float   search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal);
-    QString stateToString(const QVector<int>& state) const;
+    QVector<Node> ExpandNeighbors(const Node& node, const QVector<int>& goal) override;
+    float   Search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal);
+    QString StateToString(const QVector<int>& state) const;
 };
