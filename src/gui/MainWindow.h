@@ -47,6 +47,7 @@ private slots:
     void on_CreatePuzzleButtonClicked();
     void on_ChoosePuzzleButtonClicked();
     void on_StartButtonClicked();
+    void on_StopButtonClicked();
     void on_InitialStateButtonClicked();
     void on_GoalStateButtonClicked();
     void on_BackButtonClicked();

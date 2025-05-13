@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->createPuzzlePushButton, &QPushButton::clicked, this, &MainWindow::on_CreatePuzzleButtonClicked);
     connect(ui->choosePuzzlePushButton, &QPushButton::clicked, this, &MainWindow::on_ChoosePuzzleButtonClicked);
     connect(ui->startPushButton, &QPushButton::clicked, this, &MainWindow::on_StartButtonClicked);
+    connect(ui->stopPushButton, &QPushButton::clicked, this, &MainWindow::on_StopButtonClicked);
     connect(ui->initialStatePushButton, &QPushButton::clicked, this, &MainWindow::on_InitialStateButtonClicked);
     connect(ui->goalStatePushButton, &QPushButton::clicked, this, &MainWindow::on_GoalStateButtonClicked);
     connect(ui->backPushButton, &QPushButton::clicked, this, &MainWindow::on_BackButtonClicked);
@@ -56,6 +57,7 @@ void MainWindow::on_CreatePuzzleButtonClicked() {
     this->DisplayPuzzle(_puzzle_vector);
 
     ui->startPushButton->setEnabled(true);
+    ui->resultGroupBox->setEnabled(false);
 }
 
 void MainWindow::on_ChoosePuzzleButtonClicked() {
@@ -83,6 +85,7 @@ void MainWindow::on_ChoosePuzzleButtonClicked() {
     this->DisplayPuzzle(_puzzle_vector);
 
     ui->startPushButton->setEnabled(true);
+    ui->resultGroupBox->setEnabled(false);
 }
 
 bool MainWindow::ParseOutput(const QString &output) {
@@ -122,7 +125,9 @@ void MainWindow::DisplayPuzzle(const QVector<int>& puzzle) {
 
 void MainWindow::on_StartButtonClicked() {
     ui->startPushButton->setEnabled(false);
-    ui->menuGroupBox->setEnabled(false);
+    ui->createPuzzlePushButton->setEnabled(false);
+    ui->choosePuzzlePushButton->setEnabled(false);
+    ui->stopPushButton->setEnabled(true);
 
     if (ui->algorithmComboBox->currentText() == "A*") {
         _solver->setAlgorithm(std::make_shared<AStar>());
@@ -131,6 +136,14 @@ void MainWindow::on_StartButtonClicked() {
     }
 
     emit signal_PuzzleCreated(_puzzle_vector, _puzzle_size, ui->heuristicComboBox->currentText());
+}
+
+void MainWindow::on_StopButtonClicked() {
+    ui->createPuzzlePushButton->setEnabled(true);
+    ui->choosePuzzlePushButton->setEnabled(true);
+    ui->stopPushButton->setEnabled(false);
+
+    emit signal_CloseSolverRequested();
 }
 
 void MainWindow::on_InitialStateButtonClicked() {
@@ -159,13 +172,16 @@ void MainWindow::on_NextButtonClicked() {
 
 void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 complexity_time, qint64 complexity_size) {
     if (solved_puzzle.isEmpty() || solved_puzzle.last().size() != _puzzle_size * _puzzle_size) {
-        QMessageBox::warning(this, "Erreur", "La solution du puzzle est invalide.");
+        QMessageBox::warning(this, "Error", "The puzzle solution is invalid.");
         return;
     }
     _solved_puzzle = solved_puzzle;
     _current_state_index = _solved_puzzle.size() - 1;
 
-    ui->menuGroupBox->setEnabled(true);
+    ui->createPuzzlePushButton->setEnabled(true);
+    ui->choosePuzzlePushButton->setEnabled(true);
+    ui->startPushButton->setEnabled(false);
+    ui->stopPushButton->setEnabled(false);
     ui->resultGroupBox->setEnabled(true);
     ui->timeToProcessValueLabel->setText(this->FormatElapsedTime(elapsed_ms));
     ui->numberOfIterationsLabel->setText(QString::number(solved_puzzle.size() - 1));

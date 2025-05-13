@@ -365,6 +365,16 @@
              </spacer>
             </item>
             <item>
+             <widget class="QPushButton" name="stopPushButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Stop</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="startPushButton">
               <property name="enabled">
                <bool>false</bool>
