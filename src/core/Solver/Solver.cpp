@@ -27,10 +27,15 @@ void Solver::DecideAlgorithm() {
     } else {
         _algorithm = std::make_shared<IDAStar>();
     }
+
+    _algorithm->setShouldStopPtr(&_stop_requested);
 }
 
 void Solver::setAlgorithm(std::shared_ptr<SearchAlgorithm> algorithm) {
     _algorithm = std::move(algorithm);
+    if (_algorithm) {
+        _algorithm->setShouldStopPtr(&_stop_requested);
+    }
 }
 
 void Solver::GenerateGoal() {
@@ -79,6 +84,7 @@ void Solver::on_PuzzleCreated(const QVector<int>& puzzle, int size, const QStrin
     }
 
     _future = QtConcurrent::run([this]() { this->InitSolver(); });
+    _watcher.setFuture(_future);
 }
 
 void Solver::on_CloseSolverRequested() {

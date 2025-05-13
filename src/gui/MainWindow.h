@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QRegularExpression>
+#include <QCloseEvent>
 
 #include "Solver.h"
 #include "AStar.h"

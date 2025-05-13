@@ -18,6 +18,7 @@ public:
     void     InitSolver();
     void     setAlgorithm(std::shared_ptr<SearchAlgorithm> algorithm);
     void     requestStop();
+    QFutureWatcher<void>                _watcher;
 
 private:
     int                                 _size;
@@ -27,7 +28,7 @@ private:
     QString                             _heuristic;
     QVector<QVector<int>>               _puzzle_solved;
     QFuture<void>                       _future;
-    std::atomic<bool>                  _stop_requested{false};
+    std::atomic<bool>                   _stop_requested{false};
     
     void    GenerateGoal();
     void    DecideAlgorithm();
