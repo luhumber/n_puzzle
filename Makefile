@@ -8,6 +8,7 @@ COPY_FILES = $(wildcard file_to_copy/*)
 .PHONY: all configure clean fclean re
 
 copy_files:
+	@mkdir -p $(BUILD_DIR)
 	@cp -r file_to_copy/* $(BUILD_DIR)/
 
 all: $(BUILD_DIR)/CMakeCache.txt copy_files
