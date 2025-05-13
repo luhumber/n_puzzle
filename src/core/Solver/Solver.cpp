@@ -1,5 +1,4 @@
 #include "Solver.h"
-#include <QDebug>
 
 Solver::Solver(QObject *parent)
     : QObject(parent) {}
@@ -88,10 +87,6 @@ void Solver::on_PuzzleCreated(const QVector<int>& puzzle, int size, const QStrin
 }
 
 void Solver::on_CloseSolverRequested() {
-    requestStop();
-}
-
-void Solver::requestStop() {
     _stop_requested = true;
     if (_algorithm) {
         _algorithm->requestStop();

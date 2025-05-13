@@ -202,6 +202,7 @@ void MainWindow::DisplayMessagePuzzleLayout(const QString& message) {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
     emit signal_CloseSolverRequested();
+    
     if (_solver->_watcher.isRunning()) {
         connect(&_solver->_watcher, &QFutureWatcher<void>::finished, this, &QWidget::close);
         event->ignore();

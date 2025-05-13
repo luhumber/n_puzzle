@@ -6,7 +6,6 @@
 
 #include <QSet>
 #include <QVector>
-#include <QDebug>
 
 class IDAStar : public SearchAlgorithm {
 public:

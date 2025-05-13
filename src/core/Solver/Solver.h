@@ -2,7 +2,6 @@
 
 #include <QVector>
 #include <QObject>
-#include <QDebug>
 #include <QElapsedTimer>
 #include <QtConcurrent>
 #include <atomic>
@@ -17,8 +16,8 @@ public:
     explicit Solver(QObject *parent = nullptr);
     void     InitSolver();
     void     setAlgorithm(std::shared_ptr<SearchAlgorithm> algorithm);
-    void     requestStop();
-    QFutureWatcher<void>                _watcher;
+
+    QFutureWatcher<void>    _watcher;
 
 private:
     int                                 _size;

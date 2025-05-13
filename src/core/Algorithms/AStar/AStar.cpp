@@ -13,8 +13,6 @@ QString StateToString(const QVector<int>& state) {
 }
 
 QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVector<int>& goal) {
-    qDebug() << "Initial state:" << initial_state;
-    qDebug() << "Goal state:" << goal;
     _states_tested = 0;
 
     QMultiMap<float, Node> openList;

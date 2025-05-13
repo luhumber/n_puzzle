@@ -3,7 +3,6 @@
 #include <QString>
 #include <QVector>
 #include <QTextStream>
-#include <QDebug>
 
 class PuzzleParser
 {
