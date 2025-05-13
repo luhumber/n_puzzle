@@ -17,13 +17,15 @@ public:
     qint64  getMaxStatesInMemory() const { return _max_states_in_memory; }
     void    setMaxStatesInMemory(int max_states) { _max_states_in_memory = max_states; }
     
-    protected:
+protected:
     qint64              _max_states_in_memory = 0;
     qint64              _states_tested = 0;
     HeuristicType       _heuristic = HeuristicType::Manhattan;
     std::atomic<bool>*  _stop_requested = nullptr;
     
-    void    UpdateMaxStatesInMemory(qint64 current_states_in_memory);
-    float   ComputeHeuristic(const QVector<int>& current, const QVector<int>& goal) const;
-    virtual QVector<Node> ExpandNeighbors(const Node& node, const QVector<int>& goal) = 0;
+    void            UpdateMaxStatesInMemory(qint64 current_states_in_memory);
+    float           ComputeHeuristic(const QVector<int>& current, const QVector<int>& goal) const;
+    QVector<Node>   ExpandNeighbors(const Node& node, const QVector<int>& goal, bool withParent) const;
+    QString         StateToString(const QVector<int>& state) const;
+    bool            IsStopRequested() const;
 };

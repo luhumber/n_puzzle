@@ -6,12 +6,6 @@
 #include <QString>
 #include <QMultiMap>
 
-QString StateToString(const QVector<int>& state) {
-    QString s;
-    for (int v : state) s += QString::number(v) + ",";
-    return s;
-}
-
 QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVector<int>& goal) {
     _states_tested = 0;
 
@@ -26,7 +20,7 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
     openSetG[StateToString(initial_state)] = 0.0f;
 
     while (!openList.isEmpty()) {
-        if (_stop_requested && *_stop_requested)
+        if (IsStopRequested())
             return {};
         UpdateMaxStatesInMemory(openList.size() + closedSet.size());
         auto it = openList.begin();
@@ -51,9 +45,9 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
             return path;
         }
 
-        QVector<Node> neighbors = ExpandNeighbors(current, goal);
+        QVector<Node> neighbors = ExpandNeighbors(current, goal, true);
         for (Node& neighbor : neighbors) {
-            if (_stop_requested && *_stop_requested)
+            if (IsStopRequested())
                 return {};
             QString neighborHash = StateToString(neighbor.getState());
             if (closedSet.contains(neighborHash))
@@ -67,28 +61,4 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
         }
     }
     return {};
-}
-
-QVector<Node> AStar::ExpandNeighbors(const Node& node, const QVector<int>& goal) {
-    QVector<Node> neighbors;
-    const QVector<int>& state = node.getState();
-    int size = static_cast<int>(std::sqrt(state.size()));
-    int zeroIdx = state.indexOf(0);
-    int row = zeroIdx / size;
-    int col = zeroIdx % size;
-
-    QVector<QPair<int, int>> moves = { {0,1}, {1,0}, {0,-1}, {-1,0} };
-    for (const auto& move : moves) {
-        int newRow = row + move.first;
-        int newCol = col + move.second;
-        if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
-            int newIdx = newRow * size + newCol;
-            QVector<int> newState = state;
-            std::swap(newState[zeroIdx], newState[newIdx]);
-            float g = node.getGCost() + 1;
-            float h = ComputeHeuristic(newState, goal);
-            neighbors.append(Node(newState, g, h, std::make_shared<Node>(node)));
-        }
-    }
-    return neighbors;
 }

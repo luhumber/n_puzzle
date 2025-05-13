@@ -17,3 +17,40 @@ float SearchAlgorithm::ComputeHeuristic(const QVector<int>& current, const QVect
     }
     return 0.0f;
 }
+
+QVector<Node> SearchAlgorithm::ExpandNeighbors(const Node& node, const QVector<int>& goal, bool withParent) const {
+    QVector<Node> neighbors;
+    const QVector<int>& state = node.getState();
+    int size = static_cast<int>(std::sqrt(state.size()));
+    int zeroIdx = state.indexOf(0);
+    int row = zeroIdx / size;
+    int col = zeroIdx % size;
+
+    QVector<QPair<int, int>> moves = { {0,1}, {1,0}, {0,-1}, {-1,0} };
+    for (const auto& move : moves) {
+        int newRow = row + move.first;
+        int newCol = col + move.second;
+        if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
+            int newIdx = newRow * size + newCol;
+            QVector<int> newState = state;
+            std::swap(newState[zeroIdx], newState[newIdx]);
+            float g = node.getGCost() + 1;
+            float h = ComputeHeuristic(newState, goal);
+            std::shared_ptr<Node> parent = withParent ? std::make_shared<Node>(node) : nullptr;
+            neighbors.append(Node(newState, g, h, parent));
+        }
+    }
+    return neighbors;
+}
+
+QString SearchAlgorithm::StateToString(const QVector<int>& state) const {
+    QString str;
+    for (int value : state) {
+        str += QString::number(value) + ",";
+    }
+    return str;
+}
+
+bool SearchAlgorithm::IsStopRequested() const {
+    return _stop_requested && *_stop_requested;
+}
