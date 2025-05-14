@@ -13,23 +13,23 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
     QSet<QString> closedSet;
     QHash<QString, float> openSetG;
 
-    float h = ComputeHeuristic(initial_state, goal);
+    float h = this->ComputeHeuristic(initial_state, goal);
     Node startNode(initial_state, 0.0f, h, nullptr);
 
     openList.insert(startNode.getFCost(), startNode);
-    openSetG[StateToString(initial_state)] = 0.0f;
+    openSetG[this->StateToString(initial_state)] = 0.0f;
 
     while (!openList.isEmpty()) {
-        if (IsStopRequested())
+        if (this->IsStopRequested())
             return {};
-        UpdateMaxStatesInMemory(openList.size() + closedSet.size());
+        this->UpdateMaxStatesInMemory(openList.size() + closedSet.size());
         auto it = openList.begin();
         Node current = it.value();
         openList.erase(it);
 
         ++_states_tested;
 
-        QString currentHash = StateToString(current.getState());
+        QString currentHash = this->StateToString(current.getState());
         if (closedSet.contains(currentHash))
             continue;
         closedSet.insert(currentHash);
@@ -45,11 +45,11 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
             return path;
         }
 
-        QVector<Node> neighbors = ExpandNeighbors(current, goal, true);
+        QVector<Node> neighbors = this->ExpandNeighbors(current, goal, true);
         for (Node& neighbor : neighbors) {
-            if (IsStopRequested())
+            if (this->IsStopRequested())
                 return {};
-            QString neighborHash = StateToString(neighbor.getState());
+            QString neighborHash = this->StateToString(neighbor.getState());
             if (closedSet.contains(neighborHash))
                 continue;
 
