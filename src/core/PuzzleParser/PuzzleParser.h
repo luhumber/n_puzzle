@@ -18,7 +18,9 @@ public:
 private:
     bool ReadPuzzleSize(QTextStream &stream);
     bool ReadPuzzleRows(QTextStream &stream);
+    bool IsValidPuzzle(const QVector<int>& values, int size);
     bool CheckSolvability(const QVector<int>& puzzle, int size);
+    QVector<int> SnailOrder(int size); 
     
     int             _puzzle_size;
     QVector<int>    _puzzle_vector;
