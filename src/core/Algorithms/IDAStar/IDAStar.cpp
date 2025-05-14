@@ -24,7 +24,7 @@ QVector<QVector<int>> IDAStar::Solve(const QVector<int>& initial_state, const QV
 }
 
 float IDAStar::Search(QVector<QVector<int>>& path, float g, float bound, const QVector<int>& goal) {
-    if (IsStopRequested())
+    if (this->IsStopRequested())
         return std::numeric_limits<float>::infinity();
 
     this->UpdateMaxStatesInMemory(path.size());

@@ -51,50 +51,50 @@ float Metrics::CalculateManhattanPlusLC(const QVector<int>& current, const QVect
         goal_positions[goal[i]] = i;
     }
 
-    int linearConflict = 0;
+    int linear_conflict = 0;
 
     for (int row = 0; row < size; ++row) {
-        QVector<int> currentRow;
+        QVector<int> current_row;
         QVector<int> goalRow(size, -1);
         for (int col = 0; col < size; ++col) {
             int idx = row * size + col;
             int value = current[idx];
             if (value != 0 && (goal_positions[value] / size) == row) {
-                currentRow.append(value);
+                current_row.append(value);
             }
         }
-        for (int i = 0; i < currentRow.size(); ++i) {
-            int vi = currentRow[i];
+        for (int i = 0; i < current_row.size(); ++i) {
+            int vi = current_row[i];
             int goal_col_i = goal_positions[vi] % size;
-            for (int j = i + 1; j < currentRow.size(); ++j) {
-                int vj = currentRow[j];
+            for (int j = i + 1; j < current_row.size(); ++j) {
+                int vj = current_row[j];
                 int goal_col_j = goal_positions[vj] % size;
                 if (goal_col_i > goal_col_j)
-                    linearConflict += 2;
+                    linear_conflict += 2;
             }
         }
     }
 
     for (int col = 0; col < size; ++col) {
-        QVector<int> currentCol;
+        QVector<int> current_col;
         for (int row = 0; row < size; ++row) {
             int idx = row * size + col;
             int value = current[idx];
             if (value != 0 && (goal_positions[value] % size) == col) {
-                currentCol.append(value);
+                current_col.append(value);
             }
         }
-        for (int i = 0; i < currentCol.size(); ++i) {
-            int vi = currentCol[i];
+        for (int i = 0; i < current_col.size(); ++i) {
+            int vi = current_col[i];
             int goal_row_i = goal_positions[vi] / size;
-            for (int j = i + 1; j < currentCol.size(); ++j) {
-                int vj = currentCol[j];
+            for (int j = i + 1; j < current_col.size(); ++j) {
+                int vj = current_col[j];
                 int goal_row_j = goal_positions[vj] / size;
                 if (goal_row_i > goal_row_j)
-                    linearConflict += 2;
+                    linear_conflict += 2;
             }
         }
     }
 
-    return manhattan + linearConflict;
+    return manhattan + linear_conflict;
 }

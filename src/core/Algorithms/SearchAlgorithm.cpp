@@ -22,22 +22,22 @@ QVector<Node> SearchAlgorithm::ExpandNeighbors(const Node& node, const QVector<i
     QVector<Node> neighbors;
     const QVector<int>& state = node.getState();
     int size = static_cast<int>(std::sqrt(state.size()));
-    int zeroIdx = state.indexOf(0);
-    int row = zeroIdx / size;
-    int col = zeroIdx % size;
+    int zero_idx = state.indexOf(0);
+    int row = zero_idx / size;
+    int col = zero_idx % size;
 
     QVector<QPair<int, int>> moves = { {0,1}, {1,0}, {0,-1}, {-1,0} };
     for (const auto& move : moves) {
-        int newRow = row + move.first;
-        int newCol = col + move.second;
-        if (newRow >= 0 && newRow < size && newCol >= 0 && newCol < size) {
-            int newIdx = newRow * size + newCol;
-            QVector<int> newState = state;
-            std::swap(newState[zeroIdx], newState[newIdx]);
+        int new_row = row + move.first;
+        int new_col = col + move.second;
+        if (new_row >= 0 && new_row < size && new_col >= 0 && new_col < size) {
+            int newIdx = new_row * size + new_col;
+            QVector<int> new_state = state;
+            std::swap(new_state[zero_idx], new_state[newIdx]);
             float g = node.getGCost() + 1;
-            float h = ComputeHeuristic(newState, goal);
+            float h = this->ComputeHeuristic(new_state, goal);
             std::shared_ptr<Node> parent = withParent ? std::make_shared<Node>(node) : nullptr;
-            neighbors.append(Node(newState, g, h, parent));
+            neighbors.append(Node(new_state, g, h, parent));
         }
     }
     return neighbors;

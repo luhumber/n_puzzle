@@ -9,30 +9,30 @@
 QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVector<int>& goal) {
     _states_tested = 0;
 
-    QMultiMap<float, Node> openList;
-    QSet<QString> closedSet;
-    QHash<QString, float> openSetG;
+    QMultiMap<float, Node> open_list;
+    QSet<QString> closed_set;
+    QHash<QString, float> open_set_g;
 
     float h = this->ComputeHeuristic(initial_state, goal);
-    Node startNode(initial_state, 0.0f, h, nullptr);
+    Node start_node(initial_state, 0.0f, h, nullptr);
 
-    openList.insert(startNode.getFCost(), startNode);
-    openSetG[this->StateToString(initial_state)] = 0.0f;
+    open_list.insert(start_node.getFCost(), start_node);
+    open_set_g[this->StateToString(initial_state)] = 0.0f;
 
-    while (!openList.isEmpty()) {
+    while (!open_list.isEmpty()) {
         if (this->IsStopRequested())
             return {};
-        this->UpdateMaxStatesInMemory(openList.size() + closedSet.size());
-        auto it = openList.begin();
+        this->UpdateMaxStatesInMemory(open_list.size() + closed_set.size());
+        auto it = open_list.begin();
         Node current = it.value();
-        openList.erase(it);
+        open_list.erase(it);
 
         ++_states_tested;
 
-        QString currentHash = this->StateToString(current.getState());
-        if (closedSet.contains(currentHash))
+        QString current_hash = this->StateToString(current.getState());
+        if (closed_set.contains(current_hash))
             continue;
-        closedSet.insert(currentHash);
+        closed_set.insert(current_hash);
 
         if (current.getState() == goal) {
             QVector<QVector<int>> path;
@@ -49,14 +49,14 @@ QVector<QVector<int>> AStar::Solve(const QVector<int>& initial_state, const QVec
         for (Node& neighbor : neighbors) {
             if (this->IsStopRequested())
                 return {};
-            QString neighborHash = this->StateToString(neighbor.getState());
-            if (closedSet.contains(neighborHash))
+            QString neighbor_hash = this->StateToString(neighbor.getState());
+            if (closed_set.contains(neighbor_hash))
                 continue;
 
             float g = neighbor.getGCost();
-            if (!openSetG.contains(neighborHash) || g < openSetG[neighborHash]) {
-                openList.insert(neighbor.getFCost(), neighbor);
-                openSetG[neighborHash] = g;
+            if (!open_set_g.contains(neighbor_hash) || g < open_set_g[neighbor_hash]) {
+                open_list.insert(neighbor.getFCost(), neighbor);
+                open_set_g[neighbor_hash] = g;
             }
         }
     }
