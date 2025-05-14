@@ -3,8 +3,6 @@ CMAKE_BUILD_TYPE ?= Release
 
 CMAKE_CONFIGURE  = cmake -S . -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE)
 
-COPY_FILES = $(wildcard file_to_copy/*)
-
 .PHONY: all configure clean fclean re
 
 copy_files:

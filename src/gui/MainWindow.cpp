@@ -172,7 +172,7 @@ void MainWindow::on_NextButtonClicked() {
 
 void MainWindow::on_PuzzleSolved(const QVector<QVector<int>>& solved_puzzle, qint64 elapsed_ms, qint64 complexity_time, qint64 complexity_size) {
     if (solved_puzzle.isEmpty() || solved_puzzle.last().size() != _puzzle_size * _puzzle_size) {
-        QMessageBox::warning(this, "Error", "The puzzle solution is invalid.");
+        QMessageBox::warning(this, "Error", "The process has been stopped.");
         return;
     }
     _solved_puzzle = solved_puzzle;
